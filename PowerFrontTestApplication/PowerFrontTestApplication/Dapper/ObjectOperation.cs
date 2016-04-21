@@ -7,12 +7,13 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.Caching;
 using System;
+using System.Configuration;
 
 namespace PowerFrontTestApplication.Dapper
 {
     public class ObjectOperation : IObjectOperation
     {
-        private IDbConnection _db = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\PowerFrontTestApplication\\PowerFrontTestApplication\\App_Data\\PowerFrontDatabase.mdf;Integrated Security=True");
+        private IDbConnection _db = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
 
         public ObjectCompleteDescription GetSpecificObjectData(int objectTypeId, int objectPropertyId, int objectId)
         {
