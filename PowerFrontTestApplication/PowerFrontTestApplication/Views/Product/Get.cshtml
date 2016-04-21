@@ -1,0 +1,40 @@
+﻿@model PowerFrontTestApplication.Models.ObjectCompleteDescriptionViewModel
+@{
+    ViewBag.Title = "Get";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>List of Objects</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Object Type</th>
+                    <th>Object Property</th>
+                    <th>Object Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.ListOfObjects) {
+                <tr>
+                    <td>
+                        @item.TypeName
+                    </td>
+                    <td>
+                        @item.ObjectPropertyName
+                    </td>
+                    <td>
+                        @item.ObjectName
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

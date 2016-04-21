@@ -1,0 +1,5 @@
+c:\PowerFrontTestApplication\PowerFrontTestApplication.Models\bin\Debug\PowerFrontTestApplication.Models.dll
+c:\PowerFrontTestApplication\PowerFrontTestApplication.Models\bin\Debug\PowerFrontTestApplication.Models.pdb
+c:\PowerFrontTestApplication\PowerFrontTestApplication.Models\obj\Debug\PowerFrontTestApplication.Models.dll
+c:\PowerFrontTestApplication\PowerFrontTestApplication.Models\obj\Debug\PowerFrontTestApplication.Models.pdb
+c:\PowerFrontTestApplication\PowerFrontTestApplication.Models\obj\Debug\PowerFrontTestApplication.Models.csprojResolveAssemblyReference.cache
