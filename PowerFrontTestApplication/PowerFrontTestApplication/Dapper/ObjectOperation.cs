@@ -5,6 +5,8 @@ using Dapper;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.Caching;
+using System;
 
 namespace PowerFrontTestApplication.Dapper
 {
@@ -14,20 +16,48 @@ namespace PowerFrontTestApplication.Dapper
 
         public ObjectCompleteDescription GetSpecificObjectData(int objectTypeId, int objectPropertyId, int objectId)
         {
-            return _db.Query<ObjectCompleteDescription>("SELECT od.ObjectTypeId,od.ObjectId,od.ObjectPropertyId,od.ObjectName,ot.TypeName,op.ObjectPropertyName "
+            string cacheKey = "ObjectDataCache_" + objectTypeId + "_" + objectPropertyId + "_" + objectId;
+
+            ObjectCache cache = MemoryCache.Default;
+            var resultFromCache = cache[cacheKey] as ObjectCompleteDescription;
+            if (resultFromCache != null) return resultFromCache;
+
+            CacheItemPolicy policy = new CacheItemPolicy();
+            policy.AbsoluteExpiration =
+                DateTimeOffset.Now.AddMinutes(10.0);
+
+            var result = _db.Query<ObjectCompleteDescription>("SELECT od.ObjectTypeId,od.ObjectId,od.ObjectPropertyId,od.ObjectName,ot.TypeName,op.ObjectPropertyName "
                 + "FROM ObjectData od inner join ObjectTypes ot on od.ObjectTypeId=ot.ObjectTypeId "
                 + "inner join ObjectProperties op on od.ObjectTypeId=op.ObjectTypeId "
-                + "and od.ObjectPropertyId=op.ObjectPropertyId" 
+                + "and od.ObjectPropertyId=op.ObjectPropertyId"
                 + "WHERE od.ObjectTypeId=" + objectTypeId + " and od.ObjectId=" + objectId +
                 " and od.ObjectPropertyId=" + objectPropertyId).FirstOrDefault();
+
+            cache.Set(cacheKey, result, policy);
+            return result;
         }
 
         public List<ObjectCompleteDescription> GetAllObjectData()
         {
-            return _db.Query<ObjectCompleteDescription>("SELECT od.ObjectTypeId,od.ObjectId,od.ObjectPropertyId,od.ObjectName,ot.TypeName,op.ObjectPropertyName "
+            string cacheKey = "ObjectDataCacheCollection";
+
+            ObjectCache cache = MemoryCache.Default;
+            var resultFromCache = cache[cacheKey] as List<ObjectCompleteDescription>;
+
+            if (resultFromCache != null) return resultFromCache;
+
+            CacheItemPolicy policy = new CacheItemPolicy();
+            policy.AbsoluteExpiration =
+                DateTimeOffset.Now.AddMinutes(10.0);
+
+            var result = _db.Query<ObjectCompleteDescription>("SELECT od.ObjectTypeId,od.ObjectId,od.ObjectPropertyId,od.ObjectName,ot.TypeName,op.ObjectPropertyName "
                 + "FROM ObjectData od inner join ObjectTypes ot on od.ObjectTypeId=ot.ObjectTypeId "
                 + "inner join ObjectProperties op on od.ObjectTypeId=op.ObjectTypeId "
                 + "and od.ObjectPropertyId=op.ObjectPropertyId").ToList();
+
+            cache.Set(cacheKey, result, policy);
+
+            return result;
         }
 
         public void AddNewObjectData(ObjectCompleteDescription newData)
